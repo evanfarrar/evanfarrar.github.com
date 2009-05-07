@@ -1,0 +1,6 @@
+---
+layout: default
+title: The tests are the documentation
+---
+
+Tonight I was trying to get traction on my personal tech blog, and I really like staticmatic, bloxsom and github so I figured I should give github pages and jekyll a shot. My eyes totally glazed over after I read blog post after blog post introducing jekyll and pointing me to example projects on github, so I decided to take a step back and try a fresh approach: "just read the tests". Sure enough, the best documentation ever conceived was already installed in the "gem's test directory":http://github.com/mojombo/jekyll/test/source. Funny that. Well, that's my first bit of tech advice: read the tests, even for projects you don't plan to extend.
