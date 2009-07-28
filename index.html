@@ -3,18 +3,35 @@ layout: default
 title: Evan Farrar
 ---
 
-<h1>Welcome to my site</h1>
+{% for post in site.posts limit:5 %}
+  <div id="post">
+    <h1>{{ post.title }}</h1>
+    <div>
+      <p>{{ post.date | date: "%B %d %Y"}}</p>
+      <p>
+        {{ post.content }}
+      </p>
+      <p><a href="{{ post.url }}">permalink</a></p>
+    </div>
+  </div>
 
+  <div class="horizontal-rule">
+    <div class="ichi">&nbsp;</div>
+    <div class="ni">&nbsp;</div>
+    <div class="san">&nbsp;</div>
+    <div class="shi">&nbsp;</div>
+    <div class="go">&nbsp;</div>
+    <div class="shi">&nbsp;</div>
+    <div class="san">&nbsp;</div>
+    <div class="ni">&nbsp;</div>
+    <div class="ichi">&nbsp;</div>
+  </div>
+
+{% endfor %}
+
+More topics:
 <ul>
-  {% for post in site.posts %}
+  {% for post in site.posts offset:5 %}
     <li>{{ post.date }} <a href="{{ post.url }}">{{ post.title }}</a></li>
   {% endfor %}
 </ul>
-
-{% assign first_post = site.posts.first %}
-<div id="first_post">
-  <h1>{{ first_post.title }}</h1>
-  <div>
-    {{ first_post.content }}
-  </div>
-</div>

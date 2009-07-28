@@ -2,26 +2,47 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
-<head>
-   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-   <title>{{ page.title }}</title>
-   <meta name="author" content="<%= @page.author %>" />
+  <head>
+     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+     <title>{{ page.title }}</title>
+     <meta name="author" content="<%= @page.author %>" />
 
-   <!-- CodeRay syntax highlighting CSS -->
-   <link rel="stylesheet" href="/css/coderay.css" type="text/css" />
+     <!-- CodeRay syntax highlighting CSS -->
+     <link rel="stylesheet" href="/css/coderay.css" type="text/css" />
 
-   <!-- Homepage CSS -->
-   <link rel="stylesheet" href="/css/screen.css" type="text/css" media="screen, projection" />
-</head>
-<body>
+     <!-- Homepage CSS -->
+     <link rel="stylesheet" href="/css/screen.css" type="text/css" media="screen, projection" />
 
-<div class="site">
-  <div class="title">
-    Evan Farrar
-  </div>
+     <link type="application/atom+xml" title="Ternimal by Evan Farrar" rel="alternate" href="/atom.xml"/>
+  </head>
+  <body>
 
-  {{ content }}
-</div>
+    <div class="site">
+      <div class="title">
+        <img src="/imgsss/logo.png" alt="Ternimal by Evan Farrar" />
+      </div>
+      <div id="seperator">
+        <div id="lightblue">&nbsp;</div>
+        <div id="blocks">&nbsp;</div>
+        <div id="darkgray">&nbsp;</div>
+      </div>
 
-</body>
+    <div id="menu">
+      <div class="middle">
+        <ul>
+          <li><a href="/">Blog</a></li>
+          <li><a href="/about.html">About</a></li>
+          <li><a href="http://github.com/evanfarrar">Code</a></li>
+          <li><a href="/credit.html">Credit</a></li>
+          <li><a href="/atom.xml">Feed</a></li>
+        </ul>
+      </div>
+      <div class="background">&nbsp;</div>
+    </div>
+
+    <div id="content">
+      {{ content }}
+    </div>
+
+  </body>
 </html>
