@@ -1,0 +1,36 @@
+---
+layout: default
+title: DataMapper and Sequel
+---
+
+Recently I got the opportunity to try two new ORMs in rapid succession: DataMapper and Sequel. My "opensprints":http://github.com/evanfarrar/opensprints project used both gems in the course of a month. I started persisting my database with DataMapper, but decided to move to sequel so that I could use sqlite0 (which is already built into shoes) instead of sqlite3. They are both pretty good libraries on their own right, so I wanted to give a quick comparison of them. Either library is a great choice to add a relational database to a desktop ruby app.
+
+h2. Schema Generation
+
+DataMapper defaults to schema generation based on the model structure. You make your models, call @DataMapper.auto_migrate!@ and DataMapper can automatically creates a new table for all the models, or you can simply auto_migrate a single model when introducing a new model to the schema. You still need to write migrations to change a table after the fact, but lets face it there are plenty of tak
+
+Sequel defaults to using migrations to create a database schema. You can use the sequel command line to generate migrations, which are an awful lot like ActiveRecord migrations. Sequel simply numbers its migrations instead of timestamping them like ActiveRecord. I remember when timestamps were introduced to ActiveRecord migrations, but I don't think my apps that use sequel will ever face the same problems -- multiple simultaneous development teams trying to introduce a migration.
+
+Both can actually generate their schema using the other's method, but you might find yourself trying to paddle upstream if you try to use the library's less supported method of schema generation. I'd really reccomend going with the flow when using these libraries: they don't get enough maintainers to anticipate usage outside the norm.
+
+I really liked how DataMapper's attributes were all explicitly listed out: you didn't have to refer to the database schema to know what methods were available on an object. However in the end sequel's explicitly controlled database structure was equally comfortable to me, coming from my long history of ActiveRecord usage.
+
+h2. Finding things
+
+@Category.get(10)@ in DataMapper, @Category.@
+
+h2. Filtering results
+
+
+
+
+h2. Primary key
+
+DataMapper requires that @property :id,Serial@ be included to give a table a primary key. Sequel does something a little bit ingenious to access the primary key: @Model#pk@! No more errors like @Object#id is deprecated@ or @called :id for nil if you really wanted the id of nil you could have used 4@ just @undefined method :pk for nil@! See, isn't that easier to understand?
+
+
+h2. JUST SHOW ME THE CODE
+
+Another way you could quickly learn every subtle difference between using DataMapper in your project and using Sequel in your project is to read my diffs. I very systematically refactored every piece of functionality in my project from DataMapper to sequel. I started with the "leaf" nodes of the schema, and worked my way up to the more heavily referenced tables. I duplicated tests and left the obsolete models in place, so for a while both ORMs were simultaneously working together (using different databases).
+
+"You can browse the app":http://github.com/evanfarrar/opensprints/tree/45bc3326a4346f8ffe6abe7926e4c8733ddf15ed/lib as it was right before I deleted all references to datamapper. For example "obs_categoy.rb":http://github.com/evanfarrar/opensprints/blob/45bc3326a4346f8ffe6abe7926e4c8733ddf15ed/lib/obs_category.rb is a datamapper model and "category.rb":http://github.com/evanfarrar/opensprints/blob/45bc3326a4346f8ffe6abe7926e4c8733ddf15ed/lib/category.rb is its analogous sequel model and "test_category.rb":http://github.com/evanfarrar/opensprints/blob/45bc3326a4346f8ffe6abe7926e4c8733ddf15ed/test/test_category.rb tests both models simultaneously.
