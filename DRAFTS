@@ -1,0 +1,98 @@
+---
+layout: default
+title: DataMapper and Sequel
+---
+
+Recently I got the opportunity to try two new ORMs in rapid succession: DataMapper and Sequel. My "opensprints":http://github.com/evanfarrar/opensprints project used both gems in the course of a month. I started persisting my database with DataMapper, but decided to move to sequel so that I could use sqlite0 (which is already built into shoes) instead of sqlite3. They are both pretty good libraries on their own right, so I wanted to give a quick comparison of them. Either library is a great choice to add a relational database to a desktop ruby app.
+
+h2. Schema Generation
+
+DataMapper defaults to schema generation based on the model structure. You make your models, call @DataMapper.auto_migrate!@ and DataMapper can automatically creates a new table for all the models, or you can simply auto_migrate a single model when introducing a new model to the schema. You still need to write migrations to change a table after the fact, but lets face it there are plenty of tak
+
+Sequel defaults to using migrations to create a database schema. You can use the sequel command line to generate migrations, which are an awful lot like ActiveRecord migrations. Sequel simply numbers its migrations instead of timestamping them like ActiveRecord. I remember when timestamps were introduced to ActiveRecord migrations, but I don't think my apps that use sequel will ever face the same problems -- multiple simultaneous development teams trying to introduce a migration.
+
+Both can actually generate their schema using the other's method, but you might find yourself trying to paddle upstream if you try to use the library's less supported method of schema generation. I'd really reccomend going with the flow when using these libraries: they don't get enough maintainers to anticipate usage outside the norm.
+
+I really liked how DataMapper's attributes were all explicitly listed out: you didn't have to refer to the database schema to know what methods were available on an object. However in the end sequel's explicitly controlled database structure was equally comfortable to me, coming from my long history of ActiveRecord usage.
+
+h2. Finding things
+
+@Category.get(10)@ in DataMapper, @Category.@
+
+h2. Filtering results
+
+
+
+
+h2. Primary key
+
+DataMapper requires that @property :id,Serial@ be included to give a table a primary key. Sequel does something a little bit ingenious to access the primary key: @Model#pk@! No more errors like @Object#id is deprecated@ or @called :id for nil if you really wanted the id of nil you could have used 4@ just @undefined method :pk for nil@! See, isn't that easier to understand?
+
+
+h2. JUST SHOW ME THE CODE
+
+Another way you could quickly learn every subtle difference between using DataMapper in your project and using Sequel in your project is to read my diffs. I very systematically refactored every piece of functionality in my project from DataMapper to sequel. I started with the "leaf" nodes of the schema, and worked my way up to the more heavily referenced tables. I duplicated tests and left the obsolete models in place, so for a while both ORMs were simultaneously working together (using different databases).
+
+"You can browse the app":http://github.com/evanfarrar/opensprints/tree/45bc3326a4346f8ffe6abe7926e4c8733ddf15ed/lib as it was right before I deleted all references to datamapper. For example "obs_categoy.rb":http://github.com/evanfarrar/opensprints/blob/45bc3326a4346f8ffe6abe7926e4c8733ddf15ed/lib/obs_category.rb is a datamapper model and "category.rb":http://github.com/evanfarrar/opensprints/blob/45bc3326a4346f8ffe6abe7926e4c8733ddf15ed/lib/category.rb is its analogous sequel model and "test_category.rb":http://github.com/evanfarrar/opensprints/blob/45bc3326a4346f8ffe6abe7926e4c8733ddf15ed/test/test_category.rb tests both models simultaneously.
+
+
+====
+
+I don't think you need a crash course but you certainly should read about the current landscape so that when the opportunity to use a cutting edge tool arises you'll quickly pull the right one out of the toolbox.
+
+I haven't read a book about rails since that first one came out, so I won't be much help there. What did they call it? Flexible Internet Programming with Trains? The rails guides at http://guides.rubyonrails.org/ are totally worth a read. To stay on top of rails I basically read every "what's new in edge rails", even if I'm re-reading old articles where "edge" was version 1.2. All of those "what's new in edge rails" are summarized in the rails guides. I even helped write [fragments of sentences in] a few of them!
+
+
+- what is your typical dev stack for rails?  you use rspec for testing? cc.rb for ci? textmate for editing? mocha for mocking?
+Vim+Rails.vim: I don't give out religious advice but if you want to learn about my religion I'll gladly take you to First-day School.
+RSpec OR Shoulda+Mocha: I prefer RSpec for personally, but the smart people I frequently work with seem to prefer Shoulda. I mock heavily in my shoulda tests with mocha but RSpec has mocks built in.
+Factory Girl: instead of fixtures
+formtastic: forms are extremely important. You'll crap up your usability, your accessibility, your controller, your models, and your chances at workable architecture if your query parameters are done ad-hoc instead of being uniform. Hacking up fields that don't correspond to model methods and handwriting stuff that could be surmised through reflection are now considered harmful.
+auth_logic OR clearance: for logins/signups etc. Don't handwrite this stuff.
+JQuery - This sort of isn't a rails thing but: learn to write Unobtrusive Javascript. Don't use rails' built in stuff. Write your javascript by hand and write unit tests for it. Don't shoe-horn Object Oriented idioms into a Prototype Oriented language. JQuery.
+Hoptoad: production error reports and alerts. I don't know if I'd pay for it, but the free account is good and centro was happy to pay for a huge account there.
+New Relic RPM: even without buying their service for production, their performance reports for localhost are great.
+Git + Github: worth $7 a month / person.
+gabrielg-vlad: I think rake tasks are apt for packaging and releasing code. Vlad isn't very well maintained but my former coworker Gabe "The Hate" Gironda wrote some nice changes to it so i use his fork.
+Integrity:  Any CI is only as good as the work you put into it. Integrity has a simple interface and the ability to browse historical builds. Plus, it saves your output from every test run which you can leverage. So say you wanted to later build a graph of how long tests have taken over time. Have CI run "time rake" instead of just rake. Say you want to graph LOC vs Lines of tests since before and after you started pair programming. Have CI run "time rake && rake stats". Then you can run "script/console production" on Integrity later and get that data out after hundreds of consecutive test runs.
+haml+less-css+blueprint-css: I like HTML and CSS a lot. It's important. Haml, less and blueprint don't sacrifice the spirit of good web design while still reducing some of the repetition.
+
+
+- how about testing? do you let them hit your DB? if not what is the current state of the art?
+Unit tests have to be *fast*. That is the only thing that drives me. Use a sqlite in-memory database for your unit tests. If you need to test a database functionality that sqlite does not offer put it in a new test suite that uses postgres/mysql. Mock everything you can except the current method that is under test (mock any methods that that method will call). Use factories instead of fixtures, whether they be factory_girl or another plugin. For every test you write, try "Factory.build" and mocking first before you resort to "Factory.create" which hits the database. Functional tests are slow. Keep your controllers slim and your functional tests will be slim too.
+
+
+- do you use the rails scripts for anything?  creating the project, migrations, etc?
+I don't feel there is any problem with using scripts to generate code, but after you run "script/generate" and before you check in, you should audit every line of code, and if you aren't yet using a fixture or controller or test that was generated, then dont check it in. Usually, I use something like suspenders or another application's first checkin to start my my rails project: http://github.com/thoughtbot/suspenders. I use "./script/generate resource model_name" pretty much once a week, but i'll also use "script/generate migration AddColumnToTable" too. I still hand write every line of my views, usually in haml.
+
+Now that I've handled your specific questions, I'll give some totally unsolicited General Advice:
+
+accepts nested attributes, formtastic, and form_for:
+Strive to always have dead simple forms and controller logic. You should basically just be able to build a form from an object so that when you hit submit it passes a hash to ActiveRecord#update or #create and be done with it. I will go to great lengths to acheive this, but the new accepts_nested_attributes_for feature makes things much easier.
+
+REST Architecture / Resource Oriented Programming:
+The hardest thing for me in the last twelve months of rails development has been really embracing resources. Your application's interface with the World Wide Web should not be Object Oriented, it should be Resource Oriented. Every time you write a model, don't ask "Will I need a web service for this to access it from something besides a browser?" think "I need a consistent controller API, even if it's just consumed by a web browser". Assume that you will create a resource/controller for every model, unless it is a wholly owned dependency of another model (in which case it's time to wonder if it should be it's own model at all). Be wary of single table inheritance -- maybe you really need two different resources dealing with the same model. Don't be afraid to create restful controller that make a full CRUD interface around things that aren't even persisted. Say your app can send email: theres a "new/compose" and a  "create/send" obviously, maybe if you want to send a retraction that's a "destroy", or if you want to see your inbox that's an "index", or if you want to see a message in your inbox that's a "show". It's your responsibility to map the REST verbs to your other data manipulations the way that ActiveRecord has done to it's data manipulations.
+
+Every controller should stick to create/update/index/destroy/show/new/edit. As you dive into this every time you feel the need to write an action that isn't one of those seven, shoot me a gchat and I'll tell you how it could be either on a new controller or integrated with one of those actions by some case logic.
+
+Assume that the ideal controller looks like this (today I've got stats.opensprints.org on the brain):
+
+class ConfigFilesController < ActionController::Base
+
+def new; @config_file = ConfigFile.new; end
+
+def edit; @config_file = ConfigFile.find(params[:id]); end
+
+def destroy; ConfigFile.find(params[:id]).destroy; end
+
+def update; @config_file = ConfigFile.create(params[:config_file]); end
+
+def update; @config_file = ConfigFile.find(params[:id]); @config_file.update(params[:config_file]); end
+
+def index; @config_files = ConfigFile.all; end
+
+def show; @config_file = ConfigFile.find(params[:id]); end
+
+end
+
+No controller will ever look like that. You'll add control flow, input gaurds, special authentication, respond_to json, renders, and error handling. But those are the actions that will be exposed, and every "destroy" should probably call "destroy" on the resource at hand and every "index" should get a list of the resource at hand. If you lean in this direction, you're likely to end up creating controllers that are easily refactored, that are easily extracted into new applications, that are easily accessed by your iphone developer, etc.
