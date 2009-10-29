@@ -8,7 +8,8 @@ VALUE MyTest = Qnil;
 void Init_mytest();
 
 // Prototype for our method 'test1' - methods are prefixed by 'method_' here
-VALUE method_test1(VALUE self);
+VALUE method_test2(VALUE self);
+void method_test1(VALUE self);
 
 // The initialization method for this module
 void Init_mytest() {
@@ -17,7 +18,11 @@ void Init_mytest() {
 }
 
 // Our 'test1' method.. it simply returns a value of '10' for now.
-VALUE method_test1(VALUE self) {
-  int x = 10;
-  return INT2NUM(x);
+void method_test1(VALUE self) {
+  printf("Hello, World!\n");
 }
+
+VALUE method_test2(VALUE self) {
+  printf("Hello, World!\n");
+}
+
