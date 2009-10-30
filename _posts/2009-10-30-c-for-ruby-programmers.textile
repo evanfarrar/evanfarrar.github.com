@@ -1,0 +1,47 @@
+---
+layout: default
+title: C for Ruby Programmers (part one)
+---
+
+h2. Teach Yourself C with Ruby C extensions
+
+Many useful libraries in ruby are wrapped around C libraries. If you want to wrap a C library yourself, there are numerous examples of this available to read. However, I'd really like to see the process illustrated by as simple a C program as possible. I've got very little experience in C, other than a few semester's programming projects in college. I'd like to learn more C primarily so that I can wrap useful C graphics libraries like Cairo, GL and SDL. Instead of learning how to build my C-Ruby libraries from the ground up, I'll attempt to learn it from the top down: start with a simple ruby C module, then work my way down.
+
+As a first step, I'll write a C program that simply prints hello world, then I'll alter it to print hello world using some eval'ed Ruby, then I'll alter it again to call methods from Ruby's standard library from C.
+
+For these examples, you will need GCC, make, and ruby installed. Preferably Ruby from source, but if you can build and install C-based rubygems these examples should work.
+
+First, let's write a hello world in C. You'll need GCC for this one:
+
+  int main(){
+    printf("Hello, World!\n");
+    return 0;
+  }
+
+That wasn't so bad. To run this, save the file as hello.c, then run:
+
+  gcc hello.c
+
+That will make a file called "a.out" which is executable. So you can see, C can print C strings to std out with the printf method and GCC automatically set the executable up to call main(). This probably all seems pretty familiar to you. Now compare it to this:
+
+  #include "ruby.h"
+  void Init_hello();
+
+  void Init_hello() {
+    printf("Hello, World!\n");
+  }
+
+Basically the same right? We've got some magical method name that we assume our program will call when it executes. This time it is called @Init_hello()@ instead of @main()@. We call the exact same print statement, except we had to include a ruby header file (@ruby.h@) and declare our method (@void Init_hello();@). Now to actually build and run this hello world we'll need to use a ruby library called mkmf to generate a Makefile to compile our ruby extension. Create a file called @extconf.rb@ with this in it:
+
+  require 'mkmf'
+  dir_config('hello')
+  create_makefile('hello')
+
+Now you can run, @ruby extconf.rb@ to generate your Makefile and then @make@ to build your ruby extension. If all goes well, you'll have a "hello.so" which you can then run in @irb@:
+
+  irb(main):001:0> require 'hello'
+  Hello, World!
+  => true
+  irb(main):002:0>
+
+There you go! Stay tuned for the rest of the articles I write on this subject, as I begin to write more sophisticated Ruby Objects, and use more sophisticated C libraries to create a fully useful ruby extension.  If you're already itching to dive in to more stuff, I suggest you begin reading the excellent "README.ext document that comes with Ruby":http://blog.evanweaver.com/files/readme.ext.txt (graciously hosted by Evan Weaver).

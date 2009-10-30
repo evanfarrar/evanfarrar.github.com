@@ -1,0 +1,37 @@
+#include "ruby.h"
+VALUE HelloUniverse = Qnil;
+
+// Prototype for the initialization method - Ruby calls this, not you
+void Init_hellouniverse();
+
+// Prototype for our method 'test1' - methods are prefixed by 'method_' here
+VALUE method_hello1(VALUE self);
+VALUE method_hello2(VALUE self);
+VALUE method_hello3(VALUE self);
+
+// The initialization method for this module
+void Init_hellouniverse() {
+  HelloUniverse = rb_define_class("HelloUniverse", rb_cObject);
+  rb_define_method(HelloUniverse, "hello1", method_hello1, 0);
+  rb_define_method(HelloUniverse, "hello2", method_hello2, 0);
+  rb_define_method(HelloUniverse, "hello3", method_hello3, 0);
+}
+
+// Our 'test1' method.. it simply returns a value of '10' for now.
+VALUE method_hello1(VALUE self) {
+  printf("Hello, World!\n");
+  return Qnil;
+}
+
+VALUE method_hello2(VALUE self) {
+  rb_eval_string("puts(\"Hello, Again!\")");
+  return Qnil;
+}
+
+VALUE method_hello3(VALUE self) {
+  int puts_sym = rb_intern("puts");
+  VALUE hello_str = rb_str_new2("Hello, Ruby!");
+  rb_funcall(rb_mKernel, s_puts, 1, hello_str);
+  return Qnil;
+}
+
