@@ -12,36 +12,40 @@ As a first step, I'll write a C program that simply prints hello world, then I'l
 For these examples, you will need GCC, make, and ruby installed. Preferably Ruby from source, but if you can build and install C-based rubygems these examples should work.
 
 First, let's write a hello world in C. You'll need GCC for this one:
-
+<pre><code>
   int main(){
     printf("Hello, World!\n");
     return 0;
   }
+</code></pre>
 
 That wasn't so bad. To run this, save the file as hello.c, then run:
-
+<pre><code>
   gcc hello.c
+</code></pre>
 
 That will make a file called "a.out" which is executable. So you can see, C can print C strings to std out with the printf method and GCC automatically set the executable up to call main(). This probably all seems pretty familiar to you. Now compare it to this:
-
+<pre><code>
   #include "ruby.h"
   void Init_hello();
 
   void Init_hello() {
     printf("Hello, World!\n");
   }
+</code></pre>
 
 Basically the same right? We've got some magical method name that we assume our program will call when it executes. This time it is called @Init_hello()@ instead of @main()@. We call the exact same print statement, except we had to include a ruby header file (@ruby.h@) and declare our method (@void Init_hello();@). Now to actually build and run this hello world we'll need to use a ruby library called mkmf to generate a Makefile to compile our ruby extension. Create a file called @extconf.rb@ with this in it:
-
+<pre><code>
   require 'mkmf'
   dir_config('hello')
   create_makefile('hello')
+</code></pre>
 
 Now you can run, @ruby extconf.rb@ to generate your Makefile and then @make@ to build your ruby extension. If all goes well, you'll have a "hello.so" which you can then run in @irb@:
-
+<pre><code>
   irb(main):001:0> require 'hello'
   Hello, World!
   => true
   irb(main):002:0>
-
+</code></pre>
 There you go! Stay tuned for the rest of the articles I write on this subject, as I begin to write more sophisticated Ruby Objects, and use more sophisticated C libraries to create a fully useful ruby extension.  If you're already itching to dive in to more stuff, I suggest you begin reading the excellent "README.ext document that comes with Ruby":http://blog.evanweaver.com/files/readme.ext.txt (graciously hosted by Evan Weaver).
