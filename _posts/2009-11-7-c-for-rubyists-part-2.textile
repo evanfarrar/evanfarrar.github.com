@@ -1,0 +1,189 @@
+---
+layout: default
+title: C for Ruby Programmers (part two)
+---
+
+h2. A (very limited) Cairo Wrapper
+
+In my last example I made a super simple Ruby wrapper around a program that output a string. Now to make things a little more interesting, let's wrap a C library that can do something we might not be able to do easily in pure ruby: make an image.
+
+Often Ruby C extensions give hints about the quality of their underlying library. Based on my experience using various wrappers for Cairo in python and ruby, I can already tell it's a pretty high-quality, programmer-friendly API.
+
+Here's a simple snippet of Cairo:
+<pre><code>
+#include <cairo.h>
+int main (int argc, char *argv[]) {
+  cairo_surface_t *surface =
+    cairo_image_surface_create (CAIRO_FORMAT_ARGB32, 240, 80);
+  cairo_t *cr =
+    cairo_create (surface);
+
+  cairo_select_font_face (cr, "serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
+  cairo_set_font_size (cr, 32.0);
+  cairo_set_source_rgb (cr, 0.0, 0.0, 1.0);
+  cairo_move_to (cr, 10.0, 50.0);
+  cairo_show_text (cr, "Hello, world");
+
+  cairo_destroy (cr);
+  cairo_surface_write_to_png (surface, "hello.png");
+  cairo_surface_destroy (surface);
+  return 0;
+}
+</code></pre>
+Which will produce this:
+!/imgsss/hello.png!
+It's a little code to write some text to a surface, then save the surface as a PNG. To compile this you'd have to run @gcc hello.c -o hello `pkg-config --cflags --libs cairo`@. I'm not going to explicitly go through every line of that, but instead I will offer a translation to ruby. This code might look a bit like the following if I were to translate it into some pseudocode similar to Ruby graphics Libraries I've seen before:
+<pre><code>
+require 'hello_cairo'
+surface = Cairo::Surface.new(240, 80)
+surface.move_to(10.0,50.0)
+surface.set_color(0.0,0.0,1.0)
+surface.show_text("Hello, World")
+surface.save("hello.png")
+surface.cleanup
+</code></pre>
+
+It's not the most cleanly abstracted code, but it's certainly looks like ruby code you might have seen before. It's syntactically correct and everything. So let's see how we would bust up that C code example to the point where we can use it in the way I've outlined the the ruby code above. We'll need a Cairo module for sure, so @rb_define_module@ is our guy. We'll first want to declare our module as a ruby object at compile time, then when the ruby extension gets loaded it will call the corresponding init method and actually define the module in ruby-land.
+
+<pre><code>
+#require <ruby.h>
+VALUE Cairo = Qnil; 
+void Init_hello_cairo();
+void Init_hello_cairo() {
+  Cairo = rb_define_module("Cairo");
+}
+</code></pre>
+
+Next, we're going to want a Surface class to define those instance methods on. @rb_define_class@, right? Nope! since we want to define this class nested under a module, there is nothing in the signature of @rb_define_class@ to set the module we'd like to nest under. So, enter @rb_define_class_under@. Its parameters are @(VALUE outer, const char *name, VALUE super)@, so outer in this case should be the Cairo module we made above:
+<pre><code>
+#require <ruby.h>
+VALUE Cairo = Qnil; 
+VALUE Surface = Qnil; 
+void Init_hello_cairo() {
+  Cairo = rb_define_module("Cairo");
+  Surface = rb_define_class_under(Cairo,"Surface",rb_cObject);
+}
+</code></pre>
+
+Well, there we go. Now we could do Cairo::Surface.new...it would be computationally equivalent to Object.new but it's a start.  So let's make it do a little something more by defining :intialize. To do that, we'll need to declare the method, define the method in C and also attach the method to a Ruby object with @rb_define_method@. @rb_define_method@ takes the object we want to attach to, the C function we should invoke, and the number of arguments there will be in ruby:
+
+<pre><code>
+#require <cairo.h>
+#require <ruby.h>
+VALUE Cairo = Qnil; 
+VALUE Surface = Qnil;
+VALUE method_surface_initialize(VALUE self);
+cairo_t *cr;
+cairo_surface_t *surface;
+void Init_hello_cairo() {
+  Cairo = rb_define_module("Cairo");
+  Surface = rb_define_class_under(Cairo,"Surface",rb_cObject);
+  rb_define_method(Surface,"initialize",method_surface_initialize,2);
+}
+
+VALUE method_surface_initialize(VALUE self, VALUE width, VALUE height){
+  surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, NUM2INT(width), NUM2INT(height));
+  cr = cairo_create(surface);
+  return Qnil;
+}
+</code></pre>
+
+At this point, we've made cairo a dependency and for this to compile we'd need to help our extconf.rb find our libraries. Use @ruby extconf.rb && make@ as always to build the file, but make an extconf.rb like below:
+<pre><code>
+require 'mkmf'
+dir_config("hello_cairo")
+$CFLAGS = `pkg-config --cflags cairo`
+$LDFLAGS = `pkg-config --libs cairo`
+create_makefile("hello_cairo")
+</code></pre>
+
+Now let's forge ahead and define a few more methods. @:set_color@ and @:move_to@ are pretty direct translations from rubyland to c land. The only thing you really need to be wary of is that variables of Ruby's @VALUE@ type need the appropriate typecasting methods. In Cairo's case, these methods expect @double@ so we use @NUM2DBL()@.
+<pre><code>
+VALUE method_surface_set_color(VALUE self, VALUE red, VALUE green, VALUE blue) {
+  cairo_set_source_rgb (cr, NUM2DBL(red), NUM2DBL(green), NUM2DBL(blue));
+  return Qnil;
+}
+VALUE method_surface_move_to(VALUE self, VALUE x, VALUE y){
+  cairo_move_to(cr, NUM2DBL(x), NUM2DBL(y));
+  return Qnil;
+}
+</code></pre>
+
+And then pretty much the same deal with the rest of methods called for by my example ruby code. The most tricky bit is @StringValueCStr@ to make a C string out of a string inside a Ruby @VALUE@:
+<pre><code>
+VALUE method_surface_show_text(VALUE self, VALUE text){
+  cairo_select_font_face (cr, "serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
+  cairo_set_font_size (cr, 32.0);
+  cairo_show_text(cr, StringValueCStr(text));
+  return text;
+}
+VALUE method_surface_save(VALUE self, VALUE fname){
+  cairo_surface_write_to_png(surface, StringValueCStr(fname));
+  return fname;
+}
+VALUE method_surface_cleanup(VALUE self){
+  cairo_destroy(cr);
+  cairo_surface_destroy(surface);
+  return Qnil;
+}
+</code></pre>
+
+Well, that's pretty much it! Here is everything alltogether:
+<pre><code>
+  #include <cairo.h>
+  #include <ruby.h>
+
+  VALUE Cairo = Qnil;
+  VALUE Surface = Qnil;
+  VALUE method_surface_initialize(VALUE self, VALUE width, VALUE height);
+  VALUE method_surface_set_color(VALUE self, VALUE red, VALUE green, VALUE blue);
+  VALUE method_surface_move_to(VALUE self, VALUE x, VALUE y);
+  VALUE method_surface_show_text(VALUE self, VALUE text);
+  VALUE method_surface_save(VALUE self, VALUE fname);
+  VALUE method_surface_cleanup(VALUE self);
+  cairo_surface_t *surface;
+  cairo_t *cr;
+  void Init_hello_cairo() {
+    Cairo = rb_define_module("Cairo");
+    Surface = rb_define_class_under(Cairo,"Surface",rb_cObject);
+    rb_define_method(Surface,"initialize",method_surface_initialize,2);
+    rb_define_method(Surface,"set_color",method_surface_set_color,3);
+    rb_define_method(Surface,"show_text",method_surface_show_text,1);
+    rb_define_method(Surface,"move_to",method_surface_move_to,2);
+    rb_define_method(Surface,"save",method_surface_save,1);
+    rb_define_method(Surface,"cleanup",method_surface_cleanup,0);
+  }
+
+  VALUE method_surface_initialize(VALUE self, VALUE width, VALUE height){
+    surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, NUM2INT(width), NUM2INT(height));
+    cr = cairo_create(surface);
+    return Qnil;
+  }
+
+  VALUE method_surface_set_color(VALUE self, VALUE red, VALUE green, VALUE blue) {
+    cairo_set_source_rgb (cr, NUM2DBL(red), NUM2DBL(green), NUM2DBL(blue));
+    return Qnil;
+  }
+  VALUE method_surface_move_to(VALUE self, VALUE x, VALUE y){
+    cairo_move_to(cr, NUM2DBL(x), NUM2DBL(y));
+    return Qnil;
+  }
+
+  VALUE method_surface_show_text(VALUE self, VALUE text){
+    cairo_select_font_face (cr, "serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
+    cairo_set_font_size (cr, 32.0);
+    cairo_show_text(cr, StringValueCStr(text));
+    return text;
+  }
+
+  VALUE method_surface_save(VALUE self, VALUE fname){
+    cairo_surface_write_to_png(surface, StringValueCStr(fname));
+    return fname;
+  }
+
+  VALUE method_surface_cleanup(VALUE self){
+    cairo_destroy(cr);
+    cairo_surface_destroy(surface);
+    return Qnil;
+  }
+</code></pre>
