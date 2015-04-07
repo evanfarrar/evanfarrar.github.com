@@ -1,25 +1,25 @@
 ---
-layout: nil
+layout: null
 ---
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
  
- <title>Git Ready</title>
- <link href="http://gitready.com/atom.xml" rel="self"/>
- <link href="http://gitready.com/"/>
+ <title>Evan Farrar</title>
+ <link href="http://evanfarrar.com/atom.xml" rel="self"/>
+ <link href="http://evanfarrar.com/"/>
  <updated>{{ site.time | date_to_xmlschema }}</updated>
- <id>http://gitready.com/</id>
+ <id>http://evanfarrar.com</id>
  <author>
-   <name>Nick Quaranto</name>
-   <email>nick@quaran.to</email>
+   <name>Evan Farrar</name>
+   <email>evanfarrar@gmail.com</email>
  </author>
  
  {% for post in site.posts %}
  <entry>
    <title>{{ post.title }}</title>
-   <link href="http://gitready.com{{ post.url }}"/>
+   <link href="http://evanfarrar.com{{ post.url }}"/>
    <updated>{{ post.date | date_to_xmlschema }}</updated>
-   <id>http://gitready.com{{ post.id }}</id>
+   <id>http://evanfarrar.com{{ post.id }}</id>
    <content type="html">{{ post.content | xml_escape }}</content>
  </entry>
  {% endfor %}

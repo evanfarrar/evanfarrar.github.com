@@ -1,0 +1,28 @@
+@media(max-width:767px){
+}
+@media(min-width:768px){
+  .timeframe, .mail {
+    float: right;
+  }
+  .mail {
+    margin-top: 35px;
+  }
+  .title {
+    text-align: center;
+  }
+}
+@media(min-width:992px){}
+@media(min-width:1200px){}
+
+.mail {
+  margin-bottom: 15px;
+  display: block;
+}
+
+.job, .education {
+  margin-bottom: 30px;
+}
+
+.summary p {
+  font-size: 16px;
+}

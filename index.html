@@ -1,37 +1,93 @@
 ---
 layout: default
 title: Evan Farrar
+skills:
+  - Ruby on Rails
+  - iOS
+  - Management
+  - Analysis
+  - Git
+  - Agile Methodologies / XP
+  - PostgreSQL
+  - MySQL
+  - Javascript
+  - Test Driven Development
+  - Pair Programming
+  - API integration and design
 ---
-
-{% for post in site.posts limit:5 %}
-  <div id="post">
-    <h1>{{ post.title }}</h1>
-    <div>
-      <p>{{ post.date | date: "%B %d %Y"}}</p>
-      <p>
-        {{ post.content }}
-      </p>
-      <p><a href="{{ post.url }}">permalink</a></p>
+<div class="container">
+  <div class="row">
+    <div class="col-sm-6">
+      <h1>Evan Farrar</h1>
+    </div>
+    <div class="col-sm-6">
+      <a href="mailto:evanfarrar@gmail.com" class="mail">evanfarrar@gmail.com</a>
     </div>
   </div>
-
-  <div class="horizontal-rule">
-    <div class="ichi">&nbsp;</div>
-    <div class="ni">&nbsp;</div>
-    <div class="san">&nbsp;</div>
-    <div class="shi">&nbsp;</div>
-    <div class="go">&nbsp;</div>
-    <div class="shi">&nbsp;</div>
-    <div class="san">&nbsp;</div>
-    <div class="ni">&nbsp;</div>
-    <div class="ichi">&nbsp;</div>
+  <div class="row summary">
+    <div class="col-sm-10">
+      <p>I am a full-stack engineer with extensive startup experience. I'm an entrepreneur comfortable filling in wherever needed while I grow my team but I'm also comfortable helping large established companies execute on software development.</p>
+    </div>
   </div>
-
-{% endfor %}
-
-More topics:
-<ul>
-  {% for post in site.posts offset:5 %}
-    <li>{{ post.date }} <a href="{{ post.url }}">{{ post.title }}</a></li>
+  <h2>Skills</h2>
+  <div class="row skills">
+    {% for skill in page.skills %}
+      <div class="col-xs-6 col-sm-{% cycle 'twocolumn': '2', '10' %}">{{ skill }}</div>
+    {% endfor %}
+  </div>
+  <h2>Practical Experience</h2>
+  {% for job in site.jobs %}
+    <div class="job">
+      <div class="row">
+	<div class="col-sm-4">
+	  <h4 class="company">{{ job.company }}</h4>
+	</div>
+	<div class="col-sm-4">
+	  <h4 class="title">{{ job.title }}</h4>
+	</div>
+	<div class="col-sm-4">
+	  <h4 class="timeframe">{{ job.timeframe }}</h4>
+	</div>
+      </div>
+      <div class="row">
+	<div class="col-sm-12" class="content">
+	  {{ job.content }}
+	</div>
+      </div>
+    </div>
   {% endfor %}
-</ul>
+  <h2>Education</h2>
+  <div class="education">
+    <div class="row">
+      <div class="col-sm-8">
+	<h4 class="school">Recurse Center</h4>
+      </div>
+      <div class="col-sm-4">
+	<h4 class="timeframe">Spring 2015</h4>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12" class="content">
+	I have taken a sabbatical to teach myself new languages and do some theoretical computer science.
+      </div>
+    </div>
+  </div>
+  <div class="education">
+    <div class="row">
+      <div class="col-sm-4">
+	<h4 class="company">Illinois Institute of Technology</h4>
+      </div>
+      <div class="col-sm-4">
+	<h4 class="title">Computer Science</h4>
+      </div>
+      <div class="col-sm-4">
+	<h4 class="timeframe">2003 – 2007</h4>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12">
+	I did not graduate. I took a job as a software engineer instead.
+      </div>
+    </div>
+  </div>
+</div>
