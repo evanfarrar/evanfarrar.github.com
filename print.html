@@ -1,0 +1,94 @@
+---
+layout: default
+title: Evan Farrar
+skills:
+  - Ruby on Rails
+  - iOS
+  - Management
+  - Analysis
+  - Git
+  - Agile Methodologies / XP
+  - PostgreSQL
+  - MySQL
+  - Javascript
+  - Test Driven Development
+  - Pair Programming
+  - API integration and design
+  - Sketch / Photoshop
+---
+<div class="container print">
+  <div class="row">
+    <div class="col-sm-6">
+      <h2>Evan Farrar</h2>
+    </div>
+    <div class="col-sm-6 contact">
+      <h2>evanfarrar@gmail.com</h2>
+    </div>
+  </div>
+  <div class="row summary">
+    <div class="col-sm-12">
+      <p>I am a full-stack engineer with extensive startup experience. I'm an entrepreneur comfortable filling in wherever needed while I grow my team but I'm also comfortable helping large established companies execute on software development.</p>
+    </div>
+  </div>
+  <h3>Skills</h3>
+  <div class="row skills">
+    {% for skill in page.skills %}
+      <div class="col-xs-6 col-sm-{% cycle 'threecolumn': '2', '2','8' %}">{{ skill }}</div>
+    {% endfor %}
+  </div>
+  <h3>Practical Experience</h3>
+  {% for job in site.jobs %}
+    <div class="job">
+      <div class="row">
+	<div class="col-sm-4">
+	  <h4 class="company">{{ job.company }}</h4>
+	</div>
+	<div class="col-sm-4">
+	  <h4 class="title">{{ job.title }}</h4>
+	</div>
+	<div class="col-sm-4">
+	  <h4 class="timeframe">{{ job.timeframe }}</h4>
+	</div>
+      </div>
+      <div class="row">
+	<div class="col-sm-12" class="content">
+	  {{ job.content }}
+	</div>
+      </div>
+    </div>
+  {% endfor %}
+  <h3>Education</h3>
+  <div class="education">
+    <div class="row">
+      <div class="col-sm-8">
+	<h5 class="school">Recurse Center</h5>
+      </div>
+      <div class="col-sm-4">
+	<h5 class="timeframe">Spring 2015</h5>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12" class="content">
+	I have taken a sabbatical to teach myself new languages and do some theoretical computer science.
+      </div>
+    </div>
+  </div>
+  <div class="education">
+    <div class="row">
+      <div class="col-sm-4">
+	<h5 class="company">Illinois Institute of Technology</h5>
+      </div>
+      <div class="col-sm-4">
+	<h5 class="title">Bachelor of Science, Computer Science (Incomplete)</h5>
+      </div>
+      <div class="col-sm-4">
+	<h5 class="timeframe">2003 – 2007</h5>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12">
+	
+      </div>
+    </div>
+  </div>
+</div>

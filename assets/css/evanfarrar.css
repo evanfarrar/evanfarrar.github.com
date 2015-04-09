@@ -26,3 +26,13 @@
 .summary p {
   font-size: 16px;
 }
+
+.print {
+  font-size: 12px;
+}
+.print p {
+  font-size: 12px;
+}
+.print .contact h2 {
+  float: right;
+}
