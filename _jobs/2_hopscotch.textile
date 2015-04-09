@@ -2,5 +2,6 @@
 company: Hopscotch
 title: Co-founder
 timeframe: September 2011 – April 2012
+timeframe_short: Sept. 2011 – Apr. 2012
 ---
 After doing a hackathon and a side project together my friends Samanth and Jocelyn we decided we really wanted to work together on something we were passionate about: introducing programming to kids, especially girls. We wanted to accomplish this with a visual programming environment on the iPad. Working on Hopscotch I did everything I could that was needed: branding, product management, hands-on UX testing with kids, wireframing, pitching investors, coding, illustration and animation. The first app I worked on, "Daisy the Dinosaur":https://itunes.apple.com/us/app/daisy-the-dinosaur/id490514278?mt=8, is still in the app store today and the company is still releasing versions of their second product, Hopscotch, with thousands of daily users.
