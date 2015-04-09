@@ -1,0 +1,7 @@
+---
+company: Opensprints
+title: Founder / LLC Member
+timeframe: September 2007 – April 2012
+timeframe_short: Sept. 2007 – Apr. 2012
+---
+In 2007 I created an open source version of Gold Sprints (computer driven stationary bicycle racing) for friends. More people started to use it; my software and hardware became the de facto worldwide standard with hundreds of installations worldwide. I, with co-founders, turned it into a business to service higher end or less technical clients who wanted something custom but didn't want to modify the software or assemble the hardware themselves.

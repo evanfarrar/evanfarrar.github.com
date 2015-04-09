@@ -1,0 +1,7 @@
+---
+company: Kitchensurfing
+title: Product Engineer
+timeframe: May 2013 – February 2015
+timeframe_short: May 2013 – Feb. 2015
+---
+At Kitchensurfing I was the second non-founder on the Product team. I developed features for the product on a daily basis and did technical analysis of planned features. I developed Kitchensurfing's first iPhone app. I served as an interim product manager while we hired our first product manager and during that time spearheaded the first prototype of what would become the Same-day dinner product. I developed our engineering interview process and worked on our hiring plan.

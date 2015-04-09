@@ -1,0 +1,7 @@
+---
+company: Centro
+title: Software Engineer
+timeframe: May 2006 – July 2009
+timeframe_short: May 2006 – July 2009
+---
+At Centro I worked on a small team to develop the company's media management system in Ruby on Rails.

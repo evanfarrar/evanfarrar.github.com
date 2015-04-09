@@ -1,0 +1,7 @@
+---
+company: Groupon
+title: Software Engineer
+timeframe: January 2010 – June 2010
+timeframe_short: Jan. 2010 – June 2010
+---
+I joined a handful of engineers working at Groupon very early in their trajectory. I helped them tame their massive and flaky test suite, optimized SQL, learned how to deploy to massive constantly changing systems with minimal downtime, did live production debugging and disaster recovery, and launched Groupon's first rewards program.

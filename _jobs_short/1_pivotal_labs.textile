@@ -1,0 +1,7 @@
+---
+company: Pivotal Labs
+title: Software Engineer
+timeframe: August 2010 – May 2013
+timeframe_short: Aug. 2010 – May 2013
+---
+I helped companies learn to deliver software quickly and sustainably, with XP and good engineering practices. I worked on some big products with thousands of requests a minute and also some small teams that were still trying to define their MVP.
