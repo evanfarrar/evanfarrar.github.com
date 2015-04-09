@@ -36,3 +36,7 @@
 .print .contact h3 {
   float: right;
 }
+
+.print .job {
+  margin-bottom: 15px
+}
